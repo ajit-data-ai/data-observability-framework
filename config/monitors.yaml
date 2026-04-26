@@ -1,0 +1,35 @@
+slack:
+  webhook_url: "${SLACK_WEBHOOK_URL}"
+  channel: "#data-alerts"
+
+monitors:
+  - table: "my_project.analytics.orders"
+    checks:
+      freshness:
+        timestamp_column: updated_at
+        sla_hours: 25
+      volume:
+        partition_column: _PARTITIONDATE
+        lookback_days: 28
+        warn_z_score: 2.0
+        critical_z_score: 3.5
+      null_rate:
+        columns:
+          - name: order_id
+            threshold_pct: 0.0
+          - name: customer_id
+            threshold_pct: 1.0
+          - name: total_price
+            threshold_pct: 0.5
+
+  - table: "my_project.analytics.customers"
+    checks:
+      freshness:
+        timestamp_column: updated_at
+        sla_hours: 49
+      null_rate:
+        columns:
+          - name: email
+            threshold_pct: 0.0
+          - name: country
+            threshold_pct: 10.0
